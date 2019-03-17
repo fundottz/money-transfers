@@ -3,6 +3,7 @@ package com.revolut.transfers.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+//todo: rename to transfer, not dto
 public class TransferDto {
 
   /**

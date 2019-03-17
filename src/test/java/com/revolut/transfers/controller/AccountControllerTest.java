@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import com.revolut.transfers.model.AccountDto;
+import com.revolut.transfers.model.Account;
 import com.revolut.transfers.model.NewAccountDto;
 import io.micronaut.context.ApplicationContext;
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.BlockingHttpClient;
 import io.micronaut.http.client.HttpClient;
@@ -36,11 +36,11 @@ class AccountControllerTest {
 
   @Test
   void shouldCreateNewAccountAndReturnCreated() {
-    NewAccountDto account = new NewAccountDto();
+    var account = new NewAccountDto();
     account.setBalance(BigDecimal.ZERO);
 
-    HttpRequest<NewAccountDto> request = POST("/api/accounts", account);
-    HttpResponse<AccountDto> createdAccount = client.exchange(request, AccountDto.class);
+    var request = POST("/api/accounts", account);
+    var createdAccount = client.exchange(request, Account.class);
 
     assertNotNull(createdAccount.body());
     assertNotNull(createdAccount.body().getId());
@@ -49,32 +49,31 @@ class AccountControllerTest {
 
   @Test
   void shouldNotCreateInvalidAccountAndReturnBadRequest() {
-    NewAccountDto invalidAccount = new NewAccountDto();
+    var invalidAccount = new NewAccountDto();
     invalidAccount.setBalance(BigDecimal.valueOf(-100));
 
-    HttpRequest<NewAccountDto> request = POST("/api/accounts", invalidAccount);
+    var request = POST("/api/accounts", invalidAccount);
 
-    HttpClientResponseException clientException = assertThrows(
+    var clientException = assertThrows(
         HttpClientResponseException.class,
-        () -> client.exchange(request, AccountDto.class));
-
+        () -> client.exchange(request, Account.class));
     assertEquals(HttpStatus.BAD_REQUEST, clientException.getResponse().status());
   }
 
   @Test
   void shouldReturnExistedAccount() {
-    assertFalse(true);
+    fail();
   }
 
   @Test
   void throwsNotFoundIfAccountNotExisted() {
-    assertFalse(true);
+    fail();
   }
 
 
   @Test
   void shouldReturnAccountBalanceIfAccountExisted() {
-    assertFalse(true);
+    fail();
   }
 
   @AfterAll
