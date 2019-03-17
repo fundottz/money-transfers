@@ -24,4 +24,15 @@ public class TransferProcessor {
 
     return fromExists && toExists;
   }
+
+  public void process(NewTransferDto transfer) {
+
+    var amount = transfer.getAmount();
+
+    accountRepository.getById(transfer.getFrom())
+        .ifPresent(account -> account.withdrawal(amount));
+    accountRepository.getById(transfer.getTo())
+        .ifPresent(account -> account.deposit(amount));
+
+  }
 }
