@@ -1,4 +1,4 @@
-package com.revolut.test;
+package com.revolut.transfers;
 
 import io.micronaut.runtime.Micronaut;
 
