@@ -1,9 +1,8 @@
 package com.revolut.transfers.repository;
 
 import com.revolut.transfers.model.Account;
-import com.revolut.transfers.model.NewAccountDto;
+import com.revolut.transfers.model.NewAccountCommand;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,16 +14,13 @@ import javax.validation.constraints.NotNull;
 @Singleton
 public class AccountInMemoryRepository implements AccountRepository {
 
-  private ConcurrentHashMap<String, Account> accounts = new ConcurrentHashMap<>();
-  private AtomicInteger counter = new AtomicInteger();
+  private final ConcurrentHashMap<String, Account> accounts = new ConcurrentHashMap<>();
+  private final AtomicInteger counter = new AtomicInteger();
 
   @Override
-  public Account create(final NewAccountDto newAccountDto) {
+  public Account create(final NewAccountCommand newAccount) {
     var id = nextId();
-    var account = new Account();
-    account.setId(id);
-    account.setBalance(newAccountDto.getBalance());
-    account.setCreated(LocalDateTime.now());
+    var account = new Account(id, newAccount.getBalance());
     accounts.put(id, account);
     return account;
   }
@@ -41,13 +37,7 @@ public class AccountInMemoryRepository implements AccountRepository {
 
   @Override
   public Optional<BigDecimal> getAccountBalance(String id) {
-    return getById(id)
-        .map(Account::getBalance);
-  }
-
-  @Override
-  public boolean checkExists(String id) {
-    return getById(id).isPresent();
+    return getById(id).map(Account::getBalance);
   }
 
   @Override

@@ -3,8 +3,12 @@ package com.revolut.transfers.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-//todo: rename to transfer, not dto
-public class TransferDto {
+public class Transfer {
+
+  /**
+   * Identifier of executed transfer
+   */
+  private String id;
 
   /**
    * Identifier of sender account
@@ -26,48 +30,27 @@ public class TransferDto {
    */
   private LocalDateTime created;
 
-  /**
-   * Datetime when transfer processed due to processing queue
-   */
-  private LocalDateTime processed;
+  public Transfer(String id, String from, String to, BigDecimal amount) {
+    this.id = id;
+    this.from = from;
+    this.to = to;
+    this.amount = amount;
+    this.created = LocalDateTime.now();
+  }
 
   public String getFrom() {
     return from;
-  }
-
-  public void setFrom(String from) {
-    this.from = from;
   }
 
   public String getTo() {
     return to;
   }
 
-  public void setTo(String to) {
-    this.to = to;
-  }
-
   public BigDecimal getAmount() {
     return amount;
   }
 
-  public void setAmount(BigDecimal amount) {
-    this.amount = amount;
-  }
-
   public LocalDateTime getCreated() {
     return created;
-  }
-
-  public void setCreated(LocalDateTime created) {
-    this.created = created;
-  }
-
-  public LocalDateTime getProcessed() {
-    return processed;
-  }
-
-  public void setProcessed(LocalDateTime processed) {
-    this.processed = processed;
   }
 }

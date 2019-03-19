@@ -1,13 +1,16 @@
 package com.revolut.transfers.repository;
 
-import com.revolut.transfers.model.NewTransferDto;
-import com.revolut.transfers.model.TransferDto;
+import com.revolut.transfers.model.NewTransferCommand;
+import com.revolut.transfers.model.Transfer;
+import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 public interface TransferRepository extends Repository {
 
-  TransferDto create(NewTransferDto transfer);
+  Transfer create(NewTransferCommand transfer);
 
-  Optional<TransferDto> getById(String id);
+  Optional<Transfer> getById(String id);
 
+  List<Transfer> find(@Nullable String from, @Nullable String to);
 }

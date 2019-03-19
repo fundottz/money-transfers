@@ -3,7 +3,7 @@ package com.revolut.transfers.controller;
 import static io.micronaut.http.HttpStatus.CREATED;
 
 import com.revolut.transfers.model.Account;
-import com.revolut.transfers.model.NewAccountDto;
+import com.revolut.transfers.model.NewAccountCommand;
 import com.revolut.transfers.service.AccountService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -24,7 +24,7 @@ public class AccountController {
 
   @Post
   @Status(CREATED)
-  public Account create(@Valid NewAccountDto newAccount) {
+  public Account create(@Valid NewAccountCommand newAccount) {
     return accountService.create(newAccount);
   }
 
@@ -42,6 +42,4 @@ public class AccountController {
   public BigDecimal getAccountBalance(final String id) {
     return accountService.getBalance(id);
   }
-
-  //todo: add exceptionHandler to swap 500 -> 404 when not found
 }

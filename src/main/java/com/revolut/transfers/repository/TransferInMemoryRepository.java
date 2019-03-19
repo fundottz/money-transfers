@@ -1,31 +1,50 @@
 package com.revolut.transfers.repository;
 
-import com.revolut.transfers.model.NewTransferDto;
-import com.revolut.transfers.model.TransferDto;
+import static java.util.stream.Collectors.toList;
+
+import com.revolut.transfers.model.NewTransferCommand;
+import com.revolut.transfers.model.Transfer;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 @Singleton
 public class TransferInMemoryRepository implements TransferRepository {
 
-  private ConcurrentHashMap<String, TransferDto> transfers = new ConcurrentHashMap<>();
-  private AtomicInteger counter = new AtomicInteger();
+  private final ConcurrentHashMap<String, Transfer> transfers = new ConcurrentHashMap<>();
+  private final AtomicInteger counter = new AtomicInteger();
 
   @Override
-  public TransferDto create(NewTransferDto transfer) {
-    return null;
+  public Transfer create(NewTransferCommand newTransfer) {
+    var id = nextId();
+    var from = newTransfer.getFrom();
+    var to = newTransfer.getTo();
+    var amount = newTransfer.getAmount();
+
+    var transfer = new Transfer(id, from, to, amount);
+    this.transfers.put(id, transfer);
+
+    return transfer;
   }
 
   @Override
-  public boolean checkExists(String id) {
-    return getById(id).isPresent();
+  public Optional<Transfer> getById(String id) {
+    return Optional.ofNullable(this.transfers.get(id));
   }
 
   @Override
-  public Optional<TransferDto> getById(String id) {
-    return Optional.ofNullable(transfers.get(id));
+  public List<Transfer> find(@Nullable String from, @Nullable String to) {
+    return this.transfers.values().stream()
+        .filter(t -> t.getFrom().equals(from) || isEmptyOrNull(from))
+        .filter(t -> t.getTo().equals(to) || isEmptyOrNull(to))
+        .collect(toList());
+  }
+
+  private boolean isEmptyOrNull(String value) {
+    return value == null || value.isBlank();
   }
 
   @Override

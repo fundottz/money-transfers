@@ -2,14 +2,12 @@ package com.revolut.transfers.controller;
 
 import static io.micronaut.http.HttpRequest.POST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.revolut.transfers.model.Account;
-import com.revolut.transfers.model.NewAccountDto;
+import com.revolut.transfers.model.NewAccountCommand;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.BlockingHttpClient;
@@ -36,7 +34,7 @@ class AccountControllerTest {
 
   @Test
   void shouldCreateNewAccountAndReturnCreated() {
-    var account = new NewAccountDto();
+    var account = new NewAccountCommand();
     account.setBalance(BigDecimal.ZERO);
 
     var request = POST("/api/accounts", account);
@@ -49,7 +47,7 @@ class AccountControllerTest {
 
   @Test
   void shouldNotCreateInvalidAccountAndReturnBadRequest() {
-    var invalidAccount = new NewAccountDto();
+    var invalidAccount = new NewAccountCommand();
     invalidAccount.setBalance(BigDecimal.valueOf(-100));
 
     var request = POST("/api/accounts", invalidAccount);

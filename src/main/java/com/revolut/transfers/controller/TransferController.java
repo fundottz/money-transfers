@@ -1,17 +1,17 @@
 package com.revolut.transfers.controller;
 
-import com.revolut.transfers.exception.TransferIsNotPossibleException;
-import com.revolut.transfers.model.NewTransferDto;
-import com.revolut.transfers.model.TransferDto;
-import com.revolut.transfers.service.ExecutionService;
+import static io.micronaut.http.HttpStatus.CREATED;
+
+import com.revolut.transfers.model.NewTransferCommand;
+import com.revolut.transfers.model.Transfer;
 import com.revolut.transfers.service.TransferService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
@@ -19,35 +19,25 @@ import javax.validation.Valid;
 @Controller("/api/transfers")
 public class TransferController {
 
+  // todo: add logging
+  // todo: add exceptionHandler to swap 500 -> 404 when not found
+
   @Inject
   private TransferService transferService;
 
-  @Inject
-  private ExecutionService executionService;
-
   @Post
-  public TransferDto create(@Valid NewTransferDto transfer) {
-    var processable = executionService.isExecutable(transfer);
-
-    if (processable) {
-      return transferService.create(transfer);
-    } else {
-      throw new TransferIsNotPossibleException();
-    }
+  @Status(CREATED)
+  public Transfer create(@Valid NewTransferCommand transfer) {
+    return transferService.create(transfer);
   }
 
   @Get("/{id}")
-  public TransferDto getById(final String id) {
-    throw new RuntimeException("");
+  public Transfer getById(final String id) {
+    return transferService.getById(id);
   }
 
   @Get("/{?from,to}")
-  public List<TransferDto> find(Optional<String> from, Optional<String> to) {
-    var transferDto = new TransferDto();
-    transferDto.setFrom(from.orElse(null));
-    transferDto.setTo(to.orElse(null));
-
-    return Collections.singletonList(transferDto);
+  public List<Transfer> find(@Nullable String from, @Nullable String to) {
+    return transferService.find(from, to);
   }
-
 }

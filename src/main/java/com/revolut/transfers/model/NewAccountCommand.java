@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class NewAccountDto {
+public class NewAccountCommand {
 
   /**
    * Initial account balance

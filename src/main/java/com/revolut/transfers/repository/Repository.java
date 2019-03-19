@@ -4,5 +4,4 @@ public interface Repository {
 
   String nextId();
 
-  boolean checkExists(String id);
 }

@@ -5,25 +5,25 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-public class NewTransferDto {
+public class NewTransferCommand {
 
   /**
    * Identifier of sender account
    */
-  @NotEmpty
+  @NotEmpty(message = "Transfer sender must be specified")
   private String from;
 
   /**
-   * Identifier of receiver account
+   * Identifier of recipient account
    */
-  @NotEmpty
+  @NotEmpty(message = "Transfer recipient must be specified")
   private String to;
 
   /**
    * Amount of money for transfer
    */
   @NotNull
-  @Positive
+  @Positive(message = "The amount must be positive or zero")
   private BigDecimal amount;
 
   public String getFrom() {
