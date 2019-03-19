@@ -1,5 +1,6 @@
 package com.revolut.transfers.model;
 
+import com.revolut.transfers.exception.NotEnoughMoneyException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -15,8 +16,12 @@ public class Account {
     this.balance = this.balance.add(amount);
   }
 
-  public void withdrawal(BigDecimal amount) {
-    this.balance = this.balance.subtract(amount);
+  public void withdraw(final BigDecimal amount) throws NotEnoughMoneyException {
+    if (this.balance.compareTo(amount) != -1) {
+      this.balance = this.balance.subtract(amount);
+    } else {
+      throw new NotEnoughMoneyException();
+    }
   }
 
   public String getId() {

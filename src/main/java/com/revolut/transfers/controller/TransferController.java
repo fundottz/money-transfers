@@ -3,7 +3,7 @@ package com.revolut.transfers.controller;
 import com.revolut.transfers.exception.TransferIsNotPossibleException;
 import com.revolut.transfers.model.NewTransferDto;
 import com.revolut.transfers.model.TransferDto;
-import com.revolut.transfers.service.TransferProcessor;
+import com.revolut.transfers.service.ExecutionService;
 import com.revolut.transfers.service.TransferService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -23,11 +23,11 @@ public class TransferController {
   private TransferService transferService;
 
   @Inject
-  private TransferProcessor transferProcessor;
+  private ExecutionService executionService;
 
   @Post
   public TransferDto create(@Valid NewTransferDto transfer) {
-    var processable = transferProcessor.isProcessable(transfer);
+    var processable = executionService.isExecutable(transfer);
 
     if (processable) {
       return transferService.create(transfer);
