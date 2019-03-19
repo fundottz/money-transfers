@@ -13,13 +13,6 @@ public class ExecutionService {
   @Inject
   private AccountRepository accountRepository;
 
-  public boolean isExecutable(NewTransferCommand transfer) {
-    var from = transfer.getFrom();
-    var to = transfer.getTo();
-
-    return !from.equals(to);
-  }
-
   public void execute(NewTransferCommand transfer) {
     String from = transfer.getFrom();
     String to = transfer.getTo();
