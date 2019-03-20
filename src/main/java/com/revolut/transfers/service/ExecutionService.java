@@ -1,19 +1,29 @@
 package com.revolut.transfers.service;
 
 import com.revolut.transfers.exception.AccountNotFoundException;
+import com.revolut.transfers.exception.NotEnoughMoneyException;
 import com.revolut.transfers.exception.TransferNotPossibleException;
+import com.revolut.transfers.model.Account;
 import com.revolut.transfers.model.NewTransferCommand;
 import com.revolut.transfers.repository.AccountRepository;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class ExecutionService {
 
-  @Inject
-  private AccountRepository accountRepository;
+  private final AccountRepository accountRepository;
+  private final Logger logger;
 
-  public void execute(NewTransferCommand transfer) {
+  @Inject
+  public ExecutionService(AccountRepository accountRepository) {
+    this.accountRepository = accountRepository;
+    this.logger = LoggerFactory.getLogger(ExecutionService.class);
+  }
+
+  public void execute(NewTransferCommand transfer) throws NotEnoughMoneyException {
     String from = transfer.getFrom();
     String to = transfer.getTo();
 
@@ -26,8 +36,13 @@ public class ExecutionService {
     var transferTo = accountRepository.getById(to);
 
     if (transferFrom.isPresent() && transferTo.isPresent()) {
-      transferFrom.get().withdraw(amount);
-      transferTo.get().deposit(amount);
+      Account accountFrom = transferFrom.get();
+      accountFrom.withdraw(amount);
+      logger.info("Withdraw account {} by {}", accountFrom.getId(), amount);
+
+      Account accountTo = transferTo.get();
+      accountTo.deposit(amount);
+      logger.info("Deposit account {} by {}", accountTo.getId(), amount);
     } else {
       throw new AccountNotFoundException();
     }

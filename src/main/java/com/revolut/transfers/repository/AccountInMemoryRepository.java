@@ -31,7 +31,7 @@ public class AccountInMemoryRepository implements AccountRepository {
   }
 
   @Override
-  public Optional<Account> getById(@NotNull String id) {
+  public synchronized Optional<Account> getById(@NotNull String id) {
     return Optional.ofNullable(accounts.get(id));
   }
 

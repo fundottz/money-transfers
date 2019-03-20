@@ -20,4 +20,11 @@ public class NewAccountCommand {
   public void setBalance(BigDecimal balance) {
     this.balance = balance;
   }
+
+  public NewAccountCommand(BigDecimal balance) {
+    this.balance = balance;
+  }
+
+  public NewAccountCommand() {
+  }
 }

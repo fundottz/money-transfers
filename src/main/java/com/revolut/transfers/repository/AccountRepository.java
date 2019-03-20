@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public interface AccountRepository extends Repository {
+public interface AccountRepository {
 
   Account create(NewAccountCommand newAccountCommand);
 
@@ -15,4 +15,6 @@ public interface AccountRepository extends Repository {
   Optional<Account> getById(String id);
 
   Optional<BigDecimal> getAccountBalance(String id);
+
+  String nextId();
 }

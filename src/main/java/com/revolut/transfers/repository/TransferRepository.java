@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-public interface TransferRepository extends Repository {
+public interface TransferRepository {
 
   Transfer create(NewTransferCommand transfer);
 
   Optional<Transfer> getById(String id);
 
   List<Transfer> find(@Nullable String from, @Nullable String to);
+
+  String nextId();
 }

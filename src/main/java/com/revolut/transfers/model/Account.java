@@ -18,7 +18,6 @@ public class Account {
     this.created = LocalDateTime.now();
   }
 
-
   public String getId() {
     return id;
   }
@@ -31,11 +30,11 @@ public class Account {
     return created;
   }
 
-  public void deposit(BigDecimal amount) {
+  public synchronized void deposit(BigDecimal amount) {
     this.balance = this.balance.add(amount);
   }
 
-  public void withdraw(final BigDecimal amount) throws NotEnoughMoneyException {
+  public synchronized void withdraw(final BigDecimal amount) throws NotEnoughMoneyException {
     if (this.balance.compareTo(amount) >= 0) {
       this.balance = this.balance.subtract(amount);
     } else {
