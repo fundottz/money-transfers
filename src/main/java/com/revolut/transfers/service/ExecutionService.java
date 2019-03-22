@@ -4,7 +4,7 @@ import com.revolut.transfers.exception.AccountNotFoundException;
 import com.revolut.transfers.exception.NotEnoughMoneyException;
 import com.revolut.transfers.exception.TransferNotPossibleException;
 import com.revolut.transfers.model.Account;
-import com.revolut.transfers.model.NewTransferCommand;
+import com.revolut.transfers.model.CreateTransferCommand;
 import com.revolut.transfers.repository.AccountRepository;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,15 +15,14 @@ import org.slf4j.LoggerFactory;
 public class ExecutionService {
 
   private final AccountRepository accountRepository;
-  private final Logger logger;
+  private Logger logger = LoggerFactory.getLogger(ExecutionService.class);
 
   @Inject
   public ExecutionService(AccountRepository accountRepository) {
     this.accountRepository = accountRepository;
-    this.logger = LoggerFactory.getLogger(ExecutionService.class);
   }
 
-  public void execute(NewTransferCommand transfer) throws NotEnoughMoneyException {
+  public void execute(CreateTransferCommand transfer) throws NotEnoughMoneyException {
     String from = transfer.getFrom();
     String to = transfer.getTo();
 

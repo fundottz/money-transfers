@@ -12,6 +12,9 @@ public class Account {
 
   private LocalDateTime created;
 
+  public Account() {
+  }
+
   public Account(String id, BigDecimal balance) {
     this.id = id;
     this.balance = balance;

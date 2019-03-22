@@ -5,9 +5,8 @@ import static java.math.BigDecimal.valueOf;
 import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.revolut.transfers.model.Account;
-import com.revolut.transfers.model.NewAccountCommand;
-import com.revolut.transfers.model.NewTransferCommand;
+import com.revolut.transfers.model.CreateAccountCommand;
+import com.revolut.transfers.model.CreateTransferCommand;
 import com.revolut.transfers.repository.AccountInMemoryRepository;
 import com.revolut.transfers.repository.AccountRepository;
 import java.util.Arrays;
@@ -20,18 +19,18 @@ import org.junit.jupiter.api.Test;
 
 class ExecutionServiceTest {
 
-  AccountRepository repository = new AccountInMemoryRepository();
-  ExecutionService executionService = new ExecutionService(repository);
+  private AccountRepository repository = new AccountInMemoryRepository();
+  private ExecutionService executionService = new ExecutionService(repository);
 
   @Test
   void shouldProperHandleConcurrentTransfersBetweenTwoAccounts() throws InterruptedException {
-    Account firstAccount = repository.create(new NewAccountCommand(valueOf(1000)));
-    Account secondAccount = repository.create(new NewAccountCommand(ZERO));
+    var firstAccount = repository.create(new CreateAccountCommand(valueOf(1000)));
+    var secondAccount = repository.create(new CreateAccountCommand(ZERO));
 
     var executor = Executors.newFixedThreadPool(10);
 
-    Callable<Boolean> booleanCallable = () -> {
-      var transfer = new NewTransferCommand();
+    Callable<Boolean> callResult = () -> {
+      var transfer = new CreateTransferCommand();
       transfer.setFrom(firstAccount.getId());
       transfer.setTo(secondAccount.getId());
       transfer.setAmount(valueOf(10));
@@ -39,7 +38,7 @@ class ExecutionServiceTest {
       return true;
     };
 
-    List<Callable<Boolean>> tasks = range(0, 100).mapToObj(i -> booleanCallable)
+    var tasks = range(0, 100).mapToObj(i -> callResult)
         .collect(Collectors.toList());
 
     executor.invokeAll(tasks);
@@ -51,13 +50,13 @@ class ExecutionServiceTest {
   @Test
   void shouldHandle2of3ConcurrentTransfersWhenExecutedOnSameAccountAndOneIsOutOfMoney()
       throws InterruptedException {
-    Account firstAccount = repository.create(new NewAccountCommand(ZERO));
-    Account secondAccount = repository.create(new NewAccountCommand(valueOf(100)));
-    Account thirdAccount = repository.create(new NewAccountCommand(valueOf(50)));
+    var firstAccount = repository.create(new CreateAccountCommand(ZERO));
+    var secondAccount = repository.create(new CreateAccountCommand(valueOf(100)));
+    var thirdAccount = repository.create(new CreateAccountCommand(valueOf(50)));
 
     List<Callable<Boolean>> tasks = Arrays.asList(
         () -> {
-          var transfer = new NewTransferCommand();
+          var transfer = new CreateTransferCommand();
           transfer.setFrom(secondAccount.getId());
           transfer.setTo(firstAccount.getId());
           transfer.setAmount(valueOf(100));
@@ -65,7 +64,7 @@ class ExecutionServiceTest {
           return true;
         },
         () -> {
-          var transfer = new NewTransferCommand();
+          var transfer = new CreateTransferCommand();
           transfer.setFrom(thirdAccount.getId());
           transfer.setTo(firstAccount.getId());
           transfer.setAmount(valueOf(25));
@@ -73,7 +72,7 @@ class ExecutionServiceTest {
           return true;
         },
         () -> {
-          var transfer = new NewTransferCommand();
+          var transfer = new CreateTransferCommand();
           transfer.setFrom(secondAccount.getId());
           transfer.setTo(firstAccount.getId());
           transfer.setAmount(valueOf(50));
@@ -82,8 +81,8 @@ class ExecutionServiceTest {
         }
     );
 
+    var count = new AtomicInteger();
     var executor = Executors.newFixedThreadPool(3);
-    AtomicInteger count = new AtomicInteger();
     executor.invokeAll(tasks).forEach(f -> {
       try {
         if (f.get()) {

@@ -2,7 +2,7 @@ package com.revolut.transfers.controller;
 
 import static io.micronaut.http.HttpStatus.CREATED;
 
-import com.revolut.transfers.model.NewTransferCommand;
+import com.revolut.transfers.model.CreateTransferCommand;
 import com.revolut.transfers.model.Transfer;
 import com.revolut.transfers.service.TransferService;
 import io.micronaut.http.annotation.Controller;
@@ -19,15 +19,16 @@ import javax.validation.Valid;
 @Controller("/api/transfers")
 public class TransferController {
 
-  // todo: add logging
-  // todo: add exceptionHandler to swap 500 -> 404 when not found
+  private final TransferService transferService;
 
   @Inject
-  private TransferService transferService;
+  public TransferController(TransferService transferService) {
+    this.transferService = transferService;
+  }
 
   @Post
   @Status(CREATED)
-  public Transfer create(@Valid NewTransferCommand transfer) {
+  public Transfer create(@Valid CreateTransferCommand transfer) {
     return transferService.create(transfer);
   }
 

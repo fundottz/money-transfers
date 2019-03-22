@@ -1,13 +1,14 @@
 package com.revolut.transfers.controller;
 
+import static io.micronaut.http.HttpRequest.GET;
 import static io.micronaut.http.HttpRequest.POST;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import com.revolut.transfers.model.Account;
-import com.revolut.transfers.model.NewAccountCommand;
+import com.revolut.transfers.model.CreateAccountCommand;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.BlockingHttpClient;
@@ -24,17 +25,26 @@ class AccountControllerTest {
   private static EmbeddedServer server;
   private static BlockingHttpClient client;
 
+  private static String existedAccountId;
+
   @BeforeAll
   static void setupServer() {
     server = ApplicationContext.run(EmbeddedServer.class);
     client = server
         .getApplicationContext()
         .createBean(HttpClient.class, server.getURL()).toBlocking();
+
+    CreateAccountCommand createAccountCommand = new CreateAccountCommand();
+    createAccountCommand.setBalance(BigDecimal.TEN);
+    var request = POST("/api/accounts", createAccountCommand);
+    var createdAccount = client.exchange(request, Account.class);
+
+    existedAccountId = createdAccount.body().getId();
   }
 
   @Test
-  void shouldCreateNewAccountAndReturnCreated() {
-    var account = new NewAccountCommand();
+  void shouldCreateAccountWithZeroBalanceAndReturnCreated() {
+    var account = new CreateAccountCommand();
     account.setBalance(BigDecimal.ZERO);
 
     var request = POST("/api/accounts", account);
@@ -46,8 +56,8 @@ class AccountControllerTest {
   }
 
   @Test
-  void shouldNotCreateInvalidAccountAndReturnBadRequest() {
-    var invalidAccount = new NewAccountCommand();
+  void shouldNotCreateAccountWithNegativeBalanceAndReturnBadRequest() {
+    var invalidAccount = new CreateAccountCommand();
     invalidAccount.setBalance(BigDecimal.valueOf(-100));
 
     var request = POST("/api/accounts", invalidAccount);
@@ -59,19 +69,42 @@ class AccountControllerTest {
   }
 
   @Test
-  void shouldReturnExistedAccount() {
-    fail();
+  void shouldNotCreateAccountWithoutBalanceAndReturnBadRequest() {
+    var invalidAccount = new CreateAccountCommand();
+
+    var request = POST("/api/accounts", invalidAccount);
+
+    var clientException = assertThrows(
+        HttpClientResponseException.class,
+        () -> client.exchange(request, Account.class));
+    assertEquals(HttpStatus.BAD_REQUEST, clientException.getResponse().status());
   }
 
   @Test
-  void throwsNotFoundIfAccountNotExisted() {
-    fail();
+  void shouldReturnExistedAccount() {
+    var request = GET("/api/accounts/" + existedAccountId);
+    var existedAccount = client.exchange(request, Account.class).body();
+
+    assertNotNull(existedAccount);
+    assertEquals(existedAccountId, existedAccount.getId());
   }
 
+  @Test
+  void shouldReturnNotFoundIfAccountNotExisted() {
+    var request = GET("/api/accounts/0");
+
+    var clientException = assertThrows(
+        HttpClientResponseException.class,
+        () -> client.exchange(request, Account.class));
+    assertEquals(HttpStatus.NOT_FOUND, clientException.getResponse().status());
+  }
 
   @Test
   void shouldReturnAccountBalanceIfAccountExisted() {
-    fail();
+    var request = GET(format("/api/accounts/%s/balance", existedAccountId));
+    var balance = client.exchange(request, BigDecimal.class).body();
+
+    assertNotNull(balance);
   }
 
   @AfterAll

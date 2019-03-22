@@ -2,7 +2,7 @@ package com.revolut.transfers.repository;
 
 import static java.util.stream.Collectors.toList;
 
-import com.revolut.transfers.model.NewTransferCommand;
+import com.revolut.transfers.model.CreateTransferCommand;
 import com.revolut.transfers.model.Transfer;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +18,7 @@ public class TransferInMemoryRepository implements TransferRepository {
   private final AtomicInteger counter = new AtomicInteger();
 
   @Override
-  public Transfer create(NewTransferCommand newTransfer) {
+  public Transfer create(CreateTransferCommand newTransfer) {
     var id = nextId();
     var from = newTransfer.getFrom();
     var to = newTransfer.getTo();

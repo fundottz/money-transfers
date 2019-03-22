@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class NewAccountCommand {
+public class CreateAccountCommand {
 
   /**
    * Initial account balance
@@ -21,10 +21,10 @@ public class NewAccountCommand {
     this.balance = balance;
   }
 
-  public NewAccountCommand(BigDecimal balance) {
+  public CreateAccountCommand(BigDecimal balance) {
     this.balance = balance;
   }
 
-  public NewAccountCommand() {
+  public CreateAccountCommand() {
   }
 }

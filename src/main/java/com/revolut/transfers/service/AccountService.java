@@ -2,7 +2,7 @@ package com.revolut.transfers.service;
 
 import com.revolut.transfers.exception.AccountNotFoundException;
 import com.revolut.transfers.model.Account;
-import com.revolut.transfers.model.NewAccountCommand;
+import com.revolut.transfers.model.CreateAccountCommand;
 import com.revolut.transfers.repository.AccountRepository;
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,10 +12,14 @@ import javax.inject.Singleton;
 @Singleton
 public class AccountService {
 
-  @Inject
-  private AccountRepository accountRepository;
+  private final AccountRepository accountRepository;
 
-  public Account create(NewAccountCommand newAccount) {
+  @Inject
+  public AccountService(AccountRepository accountRepository) {
+    this.accountRepository = accountRepository;
+  }
+
+  public Account create(CreateAccountCommand newAccount) {
     return accountRepository.create(newAccount);
   }
 

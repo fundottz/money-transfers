@@ -3,7 +3,7 @@ package com.revolut.transfers.controller;
 import static io.micronaut.http.HttpStatus.CREATED;
 
 import com.revolut.transfers.model.Account;
-import com.revolut.transfers.model.NewAccountCommand;
+import com.revolut.transfers.model.CreateAccountCommand;
 import com.revolut.transfers.service.AccountService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -19,12 +19,16 @@ import javax.validation.Valid;
 @Controller("/api/accounts")
 public class AccountController {
 
+  private final AccountService accountService;
+
   @Inject
-  private AccountService accountService;
+  public AccountController(AccountService accountService) {
+    this.accountService = accountService;
+  }
 
   @Post
   @Status(CREATED)
-  public Account create(@Valid NewAccountCommand newAccount) {
+  public Account create(@Valid CreateAccountCommand newAccount) {
     return accountService.create(newAccount);
   }
 

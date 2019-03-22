@@ -1,8 +1,3 @@
-How to run: 
----
-- ./gradlew build run - to start app on default 8080 port
-- ./gradlew test - to run tests 
-
 Requirements:
 ---
 1. Java 11 used for implementation
@@ -15,8 +10,13 @@ Requirements:
 	- Gradle 5 as a build tool
 5. No database was used due to #2 requirement, persistence implemented with ConcurrencyHashMap
 6. Gradle builds standalone executable jar, which we can run as usual
-	- java -jar build/libs/money-transfers.jar
+	- java -jar build/libs/money-transfers-0.1.jar
 7. Tests included
+
+How to run: 
+---
+- ./gradlew build run - to start app on default 8080 port
+- ./gradlew test - to run tests 
 
 Endpoints: 
 ---

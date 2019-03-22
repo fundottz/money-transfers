@@ -38,6 +38,9 @@ public class Transfer {
     this.created = LocalDateTime.now();
   }
 
+  public Transfer() {
+  }
+
   public String getFrom() {
     return from;
   }

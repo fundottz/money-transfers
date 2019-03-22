@@ -1,7 +1,7 @@
 package com.revolut.transfers.repository;
 
 import com.revolut.transfers.model.Account;
-import com.revolut.transfers.model.NewAccountCommand;
+import com.revolut.transfers.model.CreateAccountCommand;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class AccountInMemoryRepository implements AccountRepository {
   private final AtomicInteger counter = new AtomicInteger();
 
   @Override
-  public Account create(final NewAccountCommand newAccount) {
+  public Account create(final CreateAccountCommand newAccount) {
     var id = nextId();
     var account = new Account(id, newAccount.getBalance());
     accounts.put(id, account);
