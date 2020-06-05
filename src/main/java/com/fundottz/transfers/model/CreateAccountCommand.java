@@ -17,10 +17,6 @@ public class CreateAccountCommand {
     return balance;
   }
 
-  public void setBalance(BigDecimal balance) {
-    this.balance = balance;
-  }
-
   public CreateAccountCommand(BigDecimal balance) {
     this.balance = balance;
   }

@@ -127,8 +127,7 @@ class TransferControllerTest {
   }
 
   private Account createAccount(BigDecimal balance){
-    var accountCommand = new CreateAccountCommand();
-    accountCommand.setBalance(balance);
+    var accountCommand = new CreateAccountCommand(balance);
 
     var request = POST("/api/accounts", accountCommand);
     var createdAccount = client.exchange(request, Account.class);

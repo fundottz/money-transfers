@@ -23,32 +23,30 @@ import org.junit.jupiter.api.Test;
 class AccountControllerTest {
 
   private static EmbeddedServer server;
-  private static BlockingHttpClient client;
-
+  private static BlockingHttpClient httpClient;
   private static String existedAccountId;
+
+  public static final String API_ROOT = "/api/accounts";
 
   @BeforeAll
   static void setupServer() {
     server = ApplicationContext.run(EmbeddedServer.class);
-    client = server
-        .getApplicationContext()
+    httpClient = server.getApplicationContext()
         .createBean(HttpClient.class, server.getURL()).toBlocking();
 
-    CreateAccountCommand createAccountCommand = new CreateAccountCommand();
-    createAccountCommand.setBalance(BigDecimal.TEN);
-    var request = POST("/api/accounts", createAccountCommand);
-    var createdAccount = client.exchange(request, Account.class);
+    CreateAccountCommand createAccountCommand = new CreateAccountCommand(BigDecimal.TEN);
+    var request = POST(API_ROOT, createAccountCommand);
+    var createdAccount = httpClient.exchange(request, Account.class);
 
     existedAccountId = createdAccount.body().getId();
   }
 
   @Test
   void shouldCreateAccountWithZeroBalanceAndReturnCreated() {
-    var account = new CreateAccountCommand();
-    account.setBalance(BigDecimal.ZERO);
+    var account = new CreateAccountCommand(BigDecimal.ZERO);
 
-    var request = POST("/api/accounts", account);
-    var createdAccount = client.exchange(request, Account.class);
+    var request = POST(API_ROOT, account);
+    var createdAccount = httpClient.exchange(request, Account.class);
 
     assertNotNull(createdAccount.body());
     assertNotNull(createdAccount.body().getId());
@@ -57,14 +55,13 @@ class AccountControllerTest {
 
   @Test
   void shouldNotCreateAccountWithNegativeBalanceAndReturnBadRequest() {
-    var invalidAccount = new CreateAccountCommand();
-    invalidAccount.setBalance(BigDecimal.valueOf(-100));
+    var invalidAccount = new CreateAccountCommand(BigDecimal.valueOf(-100));
 
-    var request = POST("/api/accounts", invalidAccount);
+    var request = POST(API_ROOT, invalidAccount);
 
     var clientException = assertThrows(
         HttpClientResponseException.class,
-        () -> client.exchange(request, Account.class));
+        () -> httpClient.exchange(request, Account.class));
     assertEquals(HttpStatus.BAD_REQUEST, clientException.getResponse().status());
   }
 
@@ -72,18 +69,18 @@ class AccountControllerTest {
   void shouldNotCreateAccountWithoutBalanceAndReturnBadRequest() {
     var invalidAccount = new CreateAccountCommand();
 
-    var request = POST("/api/accounts", invalidAccount);
+    var request = POST(API_ROOT, invalidAccount);
 
     var clientException = assertThrows(
         HttpClientResponseException.class,
-        () -> client.exchange(request, Account.class));
+        () -> httpClient.exchange(request, Account.class));
     assertEquals(HttpStatus.BAD_REQUEST, clientException.getResponse().status());
   }
 
   @Test
   void shouldReturnExistedAccount() {
-    var request = GET("/api/accounts/" + existedAccountId);
-    var existedAccount = client.exchange(request, Account.class).body();
+    var request = GET(API_ROOT + existedAccountId);
+    var existedAccount = httpClient.exchange(request, Account.class).body();
 
     assertNotNull(existedAccount);
     assertEquals(existedAccountId, existedAccount.getId());
@@ -91,18 +88,18 @@ class AccountControllerTest {
 
   @Test
   void shouldReturnNotFoundIfAccountNotExisted() {
-    var request = GET("/api/accounts/0");
+    var request = GET(format("%s/0", API_ROOT));
 
     var clientException = assertThrows(
         HttpClientResponseException.class,
-        () -> client.exchange(request, Account.class));
+        () -> httpClient.exchange(request, Account.class));
     assertEquals(HttpStatus.NOT_FOUND, clientException.getResponse().status());
   }
 
   @Test
   void shouldReturnAccountBalanceIfAccountExisted() {
-    var request = GET(format("/api/accounts/%s/balance", existedAccountId));
-    var balance = client.exchange(request, BigDecimal.class).body();
+    var request = GET(format("%s/%s/balance", API_ROOT, existedAccountId));
+    var balance = httpClient.exchange(request, BigDecimal.class).body();
 
     assertNotNull(balance);
   }
