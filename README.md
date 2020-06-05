@@ -1,14 +1,24 @@
+About
+---
+This repository is experimental and created for fun to answer typical test-assignment interview - design and implement money transfer system.  
+
+Next steps:
+--- 
+- [ ] Add ci with github actions
+- [ ] Migrate to kotlin
+- [ ] Add persistence implementation 
+
 Requirements:
 ---
 1. Java 11 used for implementation
 2. To keep it simple avoided data-transfer layer and mappings from entity
-3. To meet this requirement Netty was used as non-blocking http server
+3. Netty was used as non-blocking http server
 4. Frameworks and libraries:	
 	- Micronaut for web and dependency injection
 	- Logback for logs
 	- Junit 5 for tests
 	- Gradle 5 as a build tool
-5. No database was used due to #2 requirement, persistence implemented with ConcurrencyHashMap
+5. No database was used due to simplifications, persistence implemented with ConcurrencyHashMap
 6. Gradle builds standalone executable jar, which we can run as usual
 	- java -jar build/libs/money-transfers-0.1.jar
 7. Tests included
