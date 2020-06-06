@@ -7,7 +7,7 @@ plugins {
 }
 
 version '0.1'
-group 'com.revolut'
+group 'com.fundottz'
 
 repositories {
     mavenLocal()
@@ -49,7 +49,7 @@ shadowJar {
 
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1')
 
-mainClassName = 'com.revolut.transfers.MoneyTransferApplication'
+mainClassName = 'com.fundottz.transfers.MoneyTransferApplication'
 
 test {
     useJUnitPlatform()
