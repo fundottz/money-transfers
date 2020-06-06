@@ -1,3 +1,4 @@
+![build](https://github.com/fundottz/money-transfers/workflows/build/badge.svg?branch=master)
 About
 ---
 This repository is experimental and created for fun to answer typical test-assignment interview - design and implement money transfer system.  
