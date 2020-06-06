@@ -26,7 +26,7 @@ class AccountControllerTest {
   private static BlockingHttpClient httpClient;
   private static String existedAccountId;
 
-  public static final String API_ROOT = "/api/accounts";
+  private static final String API_ROOT = "/api/accounts";
 
   @BeforeAll
   static void setupServer() {
@@ -79,7 +79,7 @@ class AccountControllerTest {
 
   @Test
   void shouldReturnExistedAccount() {
-    var request = GET(API_ROOT + existedAccountId);
+    var request = GET(format("%s/%s", API_ROOT, existedAccountId));
     var existedAccount = httpClient.exchange(request, Account.class).body();
 
     assertNotNull(existedAccount);
